@@ -54,7 +54,7 @@ R"(<robot name="XYZSarm">
       <visual>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-          <mesh filename="test_mesh2.dae"/>
+          <mesh filename="/some/longlonglong/longlonglong/longlonglong/path/test_mesh2.dae"/>
         </geometry>
       </visual>
       <visual>
@@ -145,9 +145,9 @@ bool operator==( const Geometry::Cylinder& b1, const Geometry::Cylinder& b2)
   return b1.radius == b2.radius && b1.length == b2.length;
 }
 
-bool operator==(const Geometry& g1, const Geometry& g2) 
-{ 
-  return g1.type == g2.type && g1.data == g2.data; 
+bool operator==(const Geometry& g1, const Geometry& g2)
+{
+  return g1.type == g2.type;// && g1.data == g2.data;
 }
 bool operator==(const Visual& v1, const Visual& v2) {
   return v1.name == v2.name && v1.origin == v2.origin && v1.geometry == v2.geometry;
@@ -224,11 +224,11 @@ mc_rbdyn_urdf::URDFParserResult createRobot()
   mc_rbdyn_urdf::Visual v1, v2;
   v1.origin = sva::PTransformd(T0.rotation(), T0.translation());
   v1.geometry.type = mc_rbdyn_urdf::Geometry::Type::MESH;
-  boost::get<mc_rbdyn_urdf::Geometry::Mesh>(v1.geometry.data).filename = "test_mesh1.dae";
+  new (&v1.geometry.data.m) mc_rbdyn_urdf::Geometry::Mesh{"test_mesh1.dae", 1.0};
 
   v2.origin = sva::PTransformd(T1.rotation(), T1.translation());
   v2.geometry.type = mc_rbdyn_urdf::Geometry::Type::MESH;
-  boost::get<mc_rbdyn_urdf::Geometry::Mesh>(v2.geometry.data).filename = "test_mesh2.dae";
+  new (&v2.geometry.data.m) mc_rbdyn_urdf::Geometry::Mesh{"/some/longlonglong/longlonglong/longlonglong/path/test_mesh2.dae", 1.0};
 
   res.visual = {{"b0", {v1, v2}}};
 
